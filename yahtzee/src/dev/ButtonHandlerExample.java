@@ -10,7 +10,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 public class ButtonHandlerExample {
-
 	public static void main(String[] args) {
 		new ButtonHandlerExample().go();
 	}
@@ -23,7 +22,7 @@ public class ButtonHandlerExample {
 		
 		JPanel buttonPanel = new JPanel();
 		
-		// Create 3 buttons
+		// Create 4 buttons
 		JButton btnOne = new JButton("Button 1");
 		JButton btnTwo = new JButton("Button 2");
 		JButton btnThree = new JButton("Button 3");
@@ -56,7 +55,6 @@ public class ButtonHandlerExample {
 	}
 	
 	class AllButtonListener implements ActionListener {
-
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			
@@ -73,7 +71,7 @@ public class ButtonHandlerExample {
 		}	
 	}
 	
-	/** Setup our Super/Subclasses */
+	/** Set up our Super/Subclasses */
 	class ButtonHandler {
 		protected JButton myButton;
 		protected String myMsg;
