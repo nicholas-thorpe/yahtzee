@@ -67,8 +67,6 @@ public class DiceTest {
 					current.setIcon(d.getImage());
 				}
 			}
-			
-			checkFullHouse();
 		}
 	}
 	
