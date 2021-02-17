@@ -398,18 +398,19 @@ public class Yahtzee {
 		@Override
 		public void updateScore() {
 			if (validRoll()) {
-				
-				//fix later
-				if (true) {
+				if (textField.getText() == "") {
 					textField.setText(String.valueOf(50));
 				} else {
-					textField.setText(String.valueOf(150));
+					textField.setText(String.valueOf(Integer.parseInt(textField.getText()) + 100));
 				}
+				
 				super.updateScore();
 				
 				button.setEnabled(true);
 			} else {
-				textField.setText(String.valueOf(0));
+				if (textField.getText() == "") {
+					textField.setText(String.valueOf(0));
+				}
 				
 				super.updateScore();
 			}
