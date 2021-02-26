@@ -9,15 +9,21 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
+import javax.swing.KeyStroke;
 import javax.swing.border.TitledBorder;
 
 /**
@@ -26,7 +32,10 @@ import javax.swing.border.TitledBorder;
  */
 public class Yahtzee {
 	private int rollCount = 0;
+	private int scoreCount = 0;
+	private boolean isYahtzeeDone = false;
 	private int results[] = {0, 0, 0, 0, 0, 0};
+	
 	private ArrayList<Dice> diceList = new ArrayList<Dice>();
 	private ArrayList<ButtonHandler> handlers = new ArrayList<ButtonHandler>();
 	
@@ -100,10 +109,12 @@ public class Yahtzee {
 		CreateUpper();
 		CreateLower();
 		CreateHandlers();
+		CreateScores();
 		
 		CreatePanels();
 		SetupHandlers();
-		CreateScores();
+		SetupScores();
+		CreateMenu();
 		
 		frame.getContentPane().add(combinedPanel, BorderLayout.CENTER);
 		
@@ -239,7 +250,7 @@ public class Yahtzee {
 	}
 	
 	/**
-	 * Creation and setup method for the score labels
+	 * Creation method for the score labels
 	 */
 	private void CreateScores() {
 		upperLabel = new JLabel("Total Score:");
@@ -253,14 +264,100 @@ public class Yahtzee {
 		upperTotalTextField = new JTextField(5);
 		lowerTotalTextField = new JTextField(5);
 		grandTotalTextField = new JTextField(5);
-		
+	}
+	
+	/**
+	 * Setup method for the score labels
+	 */
+	private void SetupScores() {
 		upperTextField.setEditable(false);
 		bonusTextField.setEditable(false);
 		upperTotalTextField.setEditable(false);
 		lowerTotalTextField.setEditable(false);
 		grandTotalTextField.setEditable(false);
 		
-		upperPanel.add(upperTextField);
+		upperTextField.setHorizontalAlignment(JTextField.RIGHT);
+		bonusTextField.setHorizontalAlignment(JTextField.RIGHT);
+		upperTotalTextField.setHorizontalAlignment(JTextField.RIGHT);
+		lowerTotalTextField.setHorizontalAlignment(JTextField.RIGHT);
+		grandTotalTextField.setHorizontalAlignment(JTextField.RIGHT);
+		
+		buttonLayout.gridy = 15;
+		upperPanel.add(upperLabel, buttonLayout);
+		buttonLayout.gridy = 16;
+		upperPanel.add(bonusLabel, buttonLayout);
+		buttonLayout.gridy = 17;
+		upperPanel.add(upperTotalLabel, buttonLayout);
+		buttonLayout.gridy = 18;
+		lowerPanel.add(lowerTotalLabel, buttonLayout);
+		buttonLayout.gridy = 19;
+		lowerPanel.add(grandTotalLabel, buttonLayout);
+		
+		textFieldLayout.gridy = 15;
+		upperPanel.add(upperTextField, textFieldLayout);
+		textFieldLayout.gridy = 16;
+		upperPanel.add(bonusTextField, textFieldLayout);
+		textFieldLayout.gridy = 17;
+		upperPanel.add(upperTotalTextField, textFieldLayout);
+		textFieldLayout.gridy = 18;
+		lowerPanel.add(lowerTotalTextField, textFieldLayout);
+		textFieldLayout.gridy = 19;
+		lowerPanel.add(grandTotalTextField, textFieldLayout);
+	}
+	
+	/**
+	 * 
+	 */
+	private void CreateMenu() {
+		JMenuBar menu = new JMenuBar();
+		
+		JMenu gameMenu = new JMenu("Game");
+		JMenu viewMenu = new JMenu("View");
+		
+		JMenuItem newGameItem = new JMenuItem("New Game", KeyEvent.VK_N);
+		newGameItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
+		newGameItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int result = JOptionPane.showOptionDialog(frame, "Are you sure you would like to start a new game?",
+						"Yahtzee - New Game", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, JOptionPane.NO_OPTION);
+				if (result == JOptionPane.YES_OPTION) newGame();
+			}
+		});
+		
+		JMenuItem exitGameItem = new JMenuItem("Exit Game", KeyEvent.VK_X);
+		exitGameItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK));
+		exitGameItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//I actually kinda hate this
+				int result = JOptionPane.showOptionDialog(frame, "Are you sure you want to quit?", "Yahtzee - Exit Game",
+						JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, JOptionPane.NO_OPTION);
+				if (result == JOptionPane.YES_OPTION) System.exit(0);
+			}
+		});
+		
+		JMenuItem hallOfFameItem = new JMenuItem("Hall Of Fame", KeyEvent.VK_H);
+		hallOfFameItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, ActionEvent.CTRL_MASK));
+		hallOfFameItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
+		
+		JMenuItem aboutItem = new JMenuItem("About", KeyEvent.VK_A);
+		aboutItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK));
+		aboutItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
+		
+		gameMenu.add(newGameItem);
+		gameMenu.add(exitGameItem);
+		
+		menu.add(gameMenu);
+		menu.add(viewMenu);
+		
+		frame.setJMenuBar(menu);
 	}
 	
 	/**
@@ -276,12 +373,18 @@ public class Yahtzee {
 		return sum;
 	}
 	
+	/**
+	 * 
+	 */
 	private void clearResults() {
 		for (int i = 0; i < 6; i++) {
 			results[i] = 0;
 		}
 	}
 	
+	/**
+	 * 
+	 */
 	private void findResults() {
 		clearResults();
 		
@@ -294,21 +397,52 @@ public class Yahtzee {
 	 * Calculates the total score of the upper section
 	 */
 	private void calculateUpper() {
+		int total = 0;
 		
+		if (!onesTextField.getText().equals("")) total += Integer.parseInt(onesTextField.getText());
+		if (!twosTextField.getText().equals("")) total += Integer.parseInt(twosTextField.getText());
+		if (!threesTextField.getText().equals("")) total += Integer.parseInt(threesTextField.getText());
+		if (!foursTextField.getText().equals("")) total += Integer.parseInt(foursTextField.getText());
+		if (!fivesTextField.getText().equals("")) total += Integer.parseInt(fivesTextField.getText());
+		if (!sixesTextField.getText().equals("")) total += Integer.parseInt(sixesTextField.getText());
+		
+		upperTextField.setText(String.valueOf(total));
+		
+		if (total >= 63) {
+			bonusTextField.setText(String.valueOf(35));
+			total += 35;
+		} else bonusTextField.setText(String.valueOf(0));
+		
+		upperTotalTextField.setText(String.valueOf(total));
 	}
 	
 	/**
 	 * Calculates the total score of the lower section
 	 */
 	private void calculateLower() {
+		int total = 0;
 		
+		if (!threeOfAKindTextField.getText().equals("")) total += Integer.parseInt(threeOfAKindTextField.getText());
+		if (!fourOfAKindTextField.getText().equals("")) total += Integer.parseInt(fourOfAKindTextField.getText());
+		if (!fullHouseTextField.getText().equals("")) total += Integer.parseInt(fullHouseTextField.getText());
+		if (!smallStraightTextField.getText().equals("")) total += Integer.parseInt(smallStraightTextField.getText());
+		if (!largeStraightTextField.getText().equals("")) total += Integer.parseInt(largeStraightTextField.getText());
+		if (!yahtzeeTextField.getText().equals("")) total += Integer.parseInt(yahtzeeTextField.getText());
+		if (!chanceTextField.getText().equals("")) total += Integer.parseInt(chanceTextField.getText());
+		
+		lowerTotalTextField.setText(String.valueOf(total));
 	}
 	
 	/**
 	 * Calculates the total score
 	 */
 	private void calculateTotal() {
+		int total = 0;
 		
+		if (!upperTotalTextField.getText().equals("")) total += Integer.parseInt(upperTotalTextField.getText());
+		if (!lowerTotalTextField.getText().equals("")) total += Integer.parseInt(lowerTotalTextField.getText());
+		
+		grandTotalTextField.setText(String.valueOf(total));
 	}
 	
 	/**
@@ -341,6 +475,18 @@ public class Yahtzee {
 		}
 		
 		frame.getContentPane().add(dicePanel, BorderLayout.SOUTH);
+	}
+	
+	private void newGame() {
+		
+	}
+	
+	private boolean checkEnd() {
+		return (isYahtzeeDone && scoreCount >= 13);
+	}
+	
+	private void endGame() {
+		
 	}
 	
 	abstract class ButtonHandler {
@@ -397,6 +543,9 @@ public class Yahtzee {
 			
 			rollCount = 0;
 			rollButton.setEnabled(true);
+			scoreCount += 1;
+			
+			if (checkEnd()) endGame();
 		}
 		
 		/**
@@ -409,6 +558,7 @@ public class Yahtzee {
 				return 0;
 			}
 		}
+		
 		/**
 		 * @return is the handler for a lower item 
 		 */
@@ -703,6 +853,8 @@ public class Yahtzee {
 				if (textField.getText() == "") {
 					textField.setText(String.valueOf(0));
 				}
+				
+				isYahtzeeDone = true;
 				
 				super.updateScore();
 			}
