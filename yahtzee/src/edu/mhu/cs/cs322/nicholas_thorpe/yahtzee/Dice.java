@@ -29,7 +29,10 @@ public class Dice {
 	 * @return a random number 1-6
 	 */
 	public int roll() {
-		if (!diceButton.isEnabled()) return value;
+		if (!diceButton.isEnabled()) {
+			System.out.println("Disabled");
+			return value;
+		}
 		
 		value = (int) (Math.random() * 6 + 1);
 		setImage();
@@ -45,7 +48,7 @@ public class Dice {
 	}
 	
 	/**
-	 * Enables the toggle button
+	 * Enables or disables the toggle button
 	 */
 	public void setEnabled(boolean flag) {
 		diceButton.setEnabled(flag);

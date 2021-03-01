@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -31,6 +32,8 @@ import javax.swing.border.TitledBorder;
  *
  */
 public class Yahtzee {
+	private String name;
+	
 	private int rollCount = 0;
 	private int scoreCount = 0;
 	private boolean isYahtzeeDone = false;
@@ -103,7 +106,7 @@ public class Yahtzee {
 	 * Starts the program
 	 */
 	public void go() {
-		frame = new JFrame();
+		frame = new JFrame("Yahtzee by Nick Thorpe");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		CreateUpper();
@@ -121,7 +124,11 @@ public class Yahtzee {
 		setupDicePanel();
 		
 		frame.pack();
+		Constants.center(frame);
 		frame.setVisible(true);
+		
+		setupName();
+		frame.setTitle("Yahtzee by Nick Thorpe - " + name);
 	}
 	
 	/**
@@ -306,7 +313,7 @@ public class Yahtzee {
 	}
 	
 	/**
-	 * 
+	 * Creation and setup method for the top menu
 	 */
 	private void CreateMenu() {
 		JMenuBar menu = new JMenuBar();
@@ -339,7 +346,11 @@ public class Yahtzee {
 		hallOfFameItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, ActionEvent.CTRL_MASK));
 		hallOfFameItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				HallOfFame hof = new HallOfFame();
 				
+				JDialog hall = hof.getHallOfFameDialog();
+				
+				hall.setVisible(true);
 			}
 		});
 		
@@ -347,17 +358,42 @@ public class Yahtzee {
 		aboutItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK));
 		aboutItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				JDialog about = new JDialog();
 				
+				about.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+				about.setTitle("Yahtzee - About");
+				
+				JLabel textLabel = new JLabel("This program was written by Nick Thorpe");
+				about.getContentPane().add(textLabel, BorderLayout.CENTER);
+				
+				about.setPreferredSize(new Dimension(300, 200));
+				about.setModal(true);
 			}
 		});
 		
 		gameMenu.add(newGameItem);
 		gameMenu.add(exitGameItem);
 		
+		viewMenu.add(hallOfFameItem);
+		viewMenu.add(aboutItem);
+		
 		menu.add(gameMenu);
 		menu.add(viewMenu);
 		
 		frame.setJMenuBar(menu);
+	}
+	
+	/**
+	 * Asks for and stores the user's name
+	 * Takes the name at face value unless none is given
+	 */
+	private void setupName() {
+		name = "";
+		name = JOptionPane.showInputDialog(frame, "Please enter your name");
+		
+		if (name.length() == 0 || name.equals("") || name.equals(null)) {
+			name = "Anonymous";
+		}
 	}
 	
 	/**
@@ -374,7 +410,7 @@ public class Yahtzee {
 	}
 	
 	/**
-	 * 
+	 * Wipes the results array
 	 */
 	private void clearResults() {
 		for (int i = 0; i < 6; i++) {
@@ -383,7 +419,7 @@ public class Yahtzee {
 	}
 	
 	/**
-	 * 
+	 * Loads the dice values into the results array
 	 */
 	private void findResults() {
 		clearResults();
@@ -468,6 +504,7 @@ public class Yahtzee {
 			
 			Dice d = new Dice(db);
 			diceList.add(d);
+			
 			d.setImage();
 			d.setEnabled(false);
 			
@@ -478,7 +515,23 @@ public class Yahtzee {
 	}
 	
 	private void newGame() {
+		isYahtzeeDone = false;
+		scoreCount = 0;
 		
+		for (ButtonHandler b : handlers) {
+			b.reset();
+		}
+		
+		upperTextField.setText("");
+		bonusTextField.setText("");
+		upperTotalTextField.setText("");
+		lowerTotalTextField.setText("");
+		grandTotalTextField.setText("");
+		
+		resetDice();
+		
+		setupName();
+		frame.setTitle("Yahtzee by Nick Thorpe - " + name);
 	}
 	
 	private boolean checkEnd() {
@@ -486,7 +539,16 @@ public class Yahtzee {
 	}
 	
 	private void endGame() {
+		calculateTotal();
+		int score = Integer.parseInt(grandTotalTextField.getText());
 		
+		HallOfFame hof = new HallOfFame();
+		
+		JDialog hall = hof.getHallOfFameDialog(name, score);
+		
+		hall.setVisible(true);
+		
+		newGame();
 	}
 	
 	abstract class ButtonHandler {

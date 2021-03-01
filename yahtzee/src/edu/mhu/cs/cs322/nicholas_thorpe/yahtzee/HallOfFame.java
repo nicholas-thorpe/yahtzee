@@ -31,9 +31,11 @@ public class HallOfFame {
 	private final String FILENAME = "HallOfFame.dat";
 	private final int MAX = 100;
 	
+	
 	/**
 	 * @param args
 	 */
+	/*
 	public static void main(String[] args) {
 		HallOfFame hall = new HallOfFame();
 		
@@ -41,6 +43,7 @@ public class HallOfFame {
 		hallDialog.pack();
 		hallDialog.setVisible(true);
 	}
+	*/
 	
 	public final JDialog getHallOfFameDialog(String name, int score) {
 		if (entries.size() == 0) loadHallOfFame();
@@ -57,6 +60,8 @@ public class HallOfFame {
 		rankLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		
 		hallDialog.getContentPane().add(rankLabel, BorderLayout.NORTH);
+		hallDialog.pack();
+		Constants.center(hallDialog);
 		
 		return hallDialog;
 	}
@@ -136,6 +141,8 @@ public class HallOfFame {
 		hallDialog.getContentPane().add(dismissPanel, BorderLayout.SOUTH);
 		
 		hallDialog.setPreferredSize(new Dimension(500, 375));
+		hallDialog.pack();
+		Constants.center(hallDialog);
 		hallDialog.setModal(true);
 		
 		return hallDialog;
